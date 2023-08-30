@@ -12,6 +12,17 @@ const postAllData = async (req, res) => {
     }
 }
 
+const singleData = async (req, res) => {
+    const ID = req.params.id
+    console.log("data => ",ID);
+    try {
+        const result = await ProductsModel.findById({_id:ID});
+        res.send(result);
+    } catch (err) {
+        res.send("error")
+    }
+}
+
 const postData = async (req, res) => {
     const data = req.body
     try {
@@ -48,4 +59,4 @@ const deleteData = async (req, res) => {
         req.send("error")
     }
 }
-module.exports = { postData, getData, updateData, deleteData, postAllData }
+module.exports = { postData, getData, updateData, deleteData, postAllData,singleData }
