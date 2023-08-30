@@ -2,20 +2,32 @@ const jwt  = require("jsonwebtoken")
 const {UserModal} =require("../models/User.model")
 const bcrypt = require("bcrypt")
 require("dotenv").config()
+
 const register = async  (req,res) => {
     const {name,email,password} = req.body
     try{
         bcrypt.hash(password,5, async (err,hash) => {
             if(err){
-                res.send({"err": "Something went wrong" })
+                res.status(401).json({
+                    status: "error",
+                    message: "Something went wrong",
+                  });
             }else {
                 const user = new UserModal({name,email,password:hash})
                 await user.save()
-                res.send({message:"Registered Successfully",data:user})
+                res.status(200).json({
+                    status: "success",
+                    data: user,
+                    message: "Register successful!"
+                  });
             }
         })
     }catch(err) {
         res.send({ "err": "Registration Failed" })
+        res.status(500).json({
+            status: "error",
+            message: "Error occurred while Adding data to the Database",
+          });
     }
 }
 
@@ -28,16 +40,30 @@ const login = async  (req,res) => {
             bcrypt.compare(password,userData.password, async (err,result) => {
                 if(result){
                     const token = jwt.sign({_id:userData._id},process.env.key)
-                    res.send({user:userData,token:token})
+                    res.status(200).json({
+                        status: "success",
+                        data: userData,
+                        message: "Login successful!",
+                        token: token,
+                      });
                 }else {
-                    res.send("Invalid Credentials")
+                    res.status(401).json({
+                        status: "error",
+                        message: "Invalid credentials",
+                      });
                 }
             })
         }else {
-            res.send({message:"User Doesn't Exist"})
+            res.status(401).json({
+                status: "error",
+                message: "User doesn't exist",
+              });
         }
     }catch(err) {
-        res.send({message:"Something went wrong"})
+        res.status(500).json({
+            status: "error",
+            message: "Error occurred while fetching data",
+          });
     }
 }
 module.exports  = {register,login}
