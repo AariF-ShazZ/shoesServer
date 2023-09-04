@@ -53,8 +53,8 @@ const getData = async (req, res) => {
             .limit(limit); // Limit the number of items per page
 
         res.send({
-            "data":result.length,
-            "size": result,
+            "data":result,
+            "size": result.length,
             "page": page,
             "itemsPerPage": limit
         });
