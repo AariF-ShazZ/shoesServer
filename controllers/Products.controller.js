@@ -30,18 +30,41 @@ const postData = async (req, res) => {
         await product.save()
         res.send(data)
     } catch (err) {
-        res.send("error")
+        res.send({error:err})
     }
 }
 const getData = async (req, res) => {
+    const query = req.query;
+    const page = parseInt(query.page) || 1; 
+    const limit = parseInt(query.limit) || 10; 
+    const sortDirection = query.sort === 'desc' ? -1 : 1; 
+
     try {
-        const result = await ProductsModel.find()
-        // const arr = result.length
-        res.send(result)
+        let filter = {};
+
+        if (query.gender) {
+            const genders = Array.isArray(query.gender) ? query.gender : [query.gender];
+            filter.gender = { $in: genders };
+        }
+
+        const result = await ProductsModel.find(filter)
+            .sort({ final_price: sortDirection }) // Sort by final_price
+            .skip((page - 1) * limit) // Skip items on previous pages
+            .limit(limit); // Limit the number of items per page
+
+        res.send({
+            "Filter Data Size":result.length,
+            "Filter Data": result,
+            "page": page,
+            "itemsPerPage": limit
+        });
     } catch (err) {
-        res.send("error")
+        res.send({ "error": err.message });
     }
 }
+
+
+
 const updateData = async (req, res) => {
     const data = req.body
     try {

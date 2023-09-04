@@ -1,50 +1,69 @@
-const {CartModel} = require("../models/Cart.model")
+const { CartModel } = require("../models/Cart.model")
 
 const cartPostData = async (req, res) => {
     const data = req.body
     try {
-        const product = new CartModel(data)
-        await product.save()
-        res.send(data)
+        const isProduct = await CartModel.findOne({ _id: data._id, sizes: data.sizes })
+        if (isProduct) {
+            isProduct.qty = isProduct.qty + 1;
+           let result =  await isProduct.save(); 
+            res.send({ result :result});
+        } else {
+            const product = new CartModel(data)
+            await product.save()
+            res.send(product)
+        }
     } catch (err) {
-        res.send("error")
+        res.send({ error: err })
+    }
+}
+const cartGetData = async (req, res) => {
+    try {
+        const result = await CartModel.find()
+        res.send({ "Result =>": result })
+    } catch (err) {
+        res.send({ "error": err.message })
+    }
+}
+const cartIncreaseQuantity = async (req, res) => {
+    const data = req.body; 
+
+    try {
+        const product = await CartModel.findOne({ _id: data._id, sizes: data.sizes })
+        if (!product) {
+            return res.status(404).send({ error: 'Product not found' });
+        }
+        product.qty += 1;
+        await product.save();
+        const result = await CartModel.find()
+        res.send({ "Result =>": result })
+    } catch (err) {
+        res.status(500).send({ error: err.message });
     }
 }
 
-const cartGetData = async (req, res) => {
-    const ID = req.params.id
-    console.log("data => ",ID);
+const cartDecreaseQuantity = async (req, res) => {
+    const data = req.body; 
     try {
-        const result = await ProductsModel.findById({_id:ID});
-        res.send(result);
+        const product = await CartModel.findOne({ _id: data._id, sizes: data.sizes });
+
+        if (!product) {
+            return res.status(404).send({ error: 'Product not found' });
+        }
+
+        if (product.qty === 1) {
+            await CartModel.findByIdAndDelete(product._id);
+            const result = await CartModel.find(); 
+            return res.send({ "deletedProduct =>": result });
+        }
+
+        product.qty -= 1;
+        await product.save();
+        const result = await CartModel.find(); 
+        res.send({ "Result =>": result });
     } catch (err) {
-        res.send("error")
+        res.status(500).send({ error: err.message });
     }
 }
-const getData = async (req, res) => {
-    try {
-        const result = await ProductsModel.find()
-        // const arr = result.length
-        res.send(result)
-    } catch (err) {
-        res.send("error")
-    }
-}
-const updateData = async (req, res) => {
-    const data = req.body
-    try {
-        res.send("UPDATE")
-    } catch (err) {
-        res.send("error")
-    }
-}
-const deleteData = async (req, res) => {
-    const ID=req.params.id
-    try {
-         await ProductsModel.findByIdAndDelete({_id:ID})
-        res.send(`Deleted the Product whose id is ${ID}`)
-    } catch (err) {
-        req.send("error")
-    }
-}
-module.exports = { postData, getData, updateData, deleteData, postAllData,singleData }
+
+module.exports = { cartDecreaseQuantity, cartGetData, cartIncreaseQuantity, cartPostData }

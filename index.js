@@ -5,6 +5,7 @@ const cors = require("cors")
 const connection = require("./configs/db")
 const { productsRoutes } = require("./routes/Products.route")
 const { userRoutes } = require("./routes/User.route")
+const { cartRoutes } = require("./routes/Cart.route")
 const app = express()
 app.use(cors())
 
@@ -14,6 +15,7 @@ app.get("/" ,(req,res) => {
 })
 app.use("/user",userRoutes)
 app.use("/product",productsRoutes)
+app.use("/cart",cartRoutes)
 
 app.listen(port, async () => {
         await connection
