@@ -7,7 +7,7 @@ const cartSchema = ({
     original_price: Number,
     final_price: Number,
     images: [String],
-    sizes: Number,
+    size: Number,
     reviews: {
       type: Number,
       default: 0,

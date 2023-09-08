@@ -3,18 +3,20 @@ const { CartModel } = require("../models/Cart.model")
 const cartPostData = async (req, res) => {
     const data = req.body
     try {
-        const isProduct = await CartModel.findOne({ _id: data._id, sizes: data.sizes })
+        const isProduct = await CartModel.findOne({ _id: data._id, size: data.size })
+        console.log("isProduct",isProduct ? "true":"false")
         if (isProduct) {
             isProduct.qty = isProduct.qty + 1;
            let result =  await isProduct.save(); 
             res.send({ result :result});
         } else {
+            console.log("first time")
             const product = new CartModel(data)
             await product.save()
             res.send(product)
         }
     } catch (err) {
-        res.send({ error: err })
+        res.send({ error: err.message })
     }
 }
 const cartGetData = async (req, res) => {
