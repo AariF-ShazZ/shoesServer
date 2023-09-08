@@ -33,7 +33,7 @@ const register = async  (req,res) => {
 
 const login = async  (req,res) => {
     const { username,useremail, userpassword } = req.body
-    console.log(username,useremail, userpassword )
+    // console.log(username,useremail, userpassword )
     try{
         const userData = await UserModel.findOne({useremail})
         // console.log("user => sjdflsdf",userData);
