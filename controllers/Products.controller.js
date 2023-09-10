@@ -1,6 +1,5 @@
 const { ProductsModel } = require("../models/Products.model")
 
-
 const postAllData = async (req, res) => {
     const data = req.body
     console.log("data => ",data);
@@ -13,31 +12,58 @@ const postAllData = async (req, res) => {
 }
 
 const singleData = async (req, res) => {
-    const ID = req.params.id
-    console.log("data => ",ID);
+    const ID = req.params.id;
+    console.log("data => ", ID);
     try {
-        const result = await ProductsModel.findById({_id:ID});
-        res.send(result);
+        const result = await ProductsModel.findById({ _id: ID });
+
+        if (result) {
+            res.status(200).json({
+                success: true,
+                data: result,
+            });
+        } else {
+            res.status(404).json({
+                success: false,
+                message: `Product with id ${ID} not found`,
+            });
+        }
     } catch (err) {
-        res.send("error")
+        res.status(500).json({
+            success: false,
+            error: err.message,
+        });
     }
-}
+};
+
 
 const postData = async (req, res) => {
-    const data = req.body
+    const data = req.body;
     try {
-        const product = new ProductsModel(data)
-        await product.save()
-        res.send(data)
+        const product = new ProductsModel(data);
+        await product.save();
+
+        const savedProducts = await ProductsModel.find();
+
+        res.status(201).json({
+            success: true,
+            message: 'Product successfully created',
+            data: savedProducts
+        });
     } catch (err) {
-        res.send({error:err})
+        res.status(500).json({
+            success: false,
+            message: 'Error creating product',
+            error: err.message
+        });
     }
-}
+};
+
 const getData = async (req, res) => {
     const query = req.query;
-    const page = parseInt(query.page) || 1; 
-    const limit = parseInt(query.limit) || 10; 
-    const sortDirection = query.sort === 'desc' ? -1 : 1; 
+    const page = parseInt(query.page) || 1;
+    const limit = parseInt(query.limit) || 10;
+    const sortDirection = query.sort === 'desc' ? -1 : 1;
 
     try {
         let filter = {};
@@ -48,20 +74,21 @@ const getData = async (req, res) => {
         }
 
         const result = await ProductsModel.find(filter)
-            .sort({ final_price: sortDirection }) // Sort by final_price
-            .skip((page - 1) * limit) // Skip items on previous pages
-            .limit(limit); // Limit the number of items per page
+            .sort({ final_price: sortDirection }) 
+            .skip((page - 1) * limit) 
+            .limit(limit); 
 
-        res.send({
-            "data":result,
-            "size": result.length,
-            "page": page,
-            "itemsPerPage": limit
+        res.status(200).json({
+            data: result,
+            size: result.length,
+            page: page,
+            itemsPerPage: limit
         });
     } catch (err) {
-        res.send({ "error": err.message });
+        res.status(500).json({ error: err.message });
     }
 }
+
 
 
 
@@ -73,13 +100,27 @@ const updateData = async (req, res) => {
         res.send("error")
     }
 }
+
 const deleteData = async (req, res) => {
-    const ID=req.params.id
+    const ID = req.params.id;
     try {
-         await ProductsModel.findByIdAndDelete({_id:ID})
-        res.send(`Deleted the Product whose id is ${ID}`)
+        const deletedProduct = await ProductsModel.findByIdAndDelete({ _id: ID });
+
+        if (deletedProduct) {
+            const remainingData = await ProductsModel.find();
+
+            res.status(200).json({
+                message: `Deleted the Product whose id is ${ID}`,
+                remainingData: remainingData,
+                remainingDataSize: remainingData.length,
+            });
+        } else {
+            res.status(404).json({ message: `Product with id ${ID} not found` });
+        }
     } catch (err) {
-        req.send("error")
+        res.status(500).json({ message: 'Internal Server Error' });
     }
-}
+};
+
+
 module.exports = { postData, getData, updateData, deleteData, postAllData,singleData }
