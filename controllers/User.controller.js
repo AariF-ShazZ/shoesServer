@@ -72,7 +72,7 @@ const getUsers = async  (req,res) => {
     try{
         const usersData = await UserModel.find()
         // console.log("user => sjdflsdf",userData);
-        if(usersData){
+        if(usersData.length > 0){
             res.status(200).json({
                 status: "success",
                 users:usersData,
