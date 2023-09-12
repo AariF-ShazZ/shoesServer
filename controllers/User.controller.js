@@ -90,4 +90,35 @@ const getUsers = async  (req,res) => {
           });
     }
 }
-module.exports  = {register,login,getUsers}
+const deleteUser = async  (req,res) => {
+    const ID = req.params.id;
+    try{
+        const usersData = await UserModel.findByIdAndDelete({_id:ID})
+        // res.send({id:ID,users:usersData})
+        if (usersData) {
+            const remainingUsers = await UserModel.find();
+            if(remainingUsers.length > 0){
+                res.status(200).json({
+                    message: `Deleted the User whose id is ${ID}`,
+                    users: remainingUsers,
+                    remainingUserSize: remainingUsers.length,
+                });
+            }else{
+                res.status(201).json({
+                    message: `Deleted the User whose id is ${ID}`,
+                    users: `You don't have any customer`,   
+                });
+            }
+         
+        } else {
+            res.status(404).json({ message: `User with id ${ID} not found` });
+        }
+    }catch(err) {
+        res.status(500).json({
+            status: "error",
+            message: "Error occurred while fetching data",
+          });
+    }
+}
+
+module.exports  = {register,login,getUsers,deleteUser}
