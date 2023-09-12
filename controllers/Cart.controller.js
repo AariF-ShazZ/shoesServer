@@ -52,7 +52,7 @@ const cartGetData = async (req, res) => {
     const userID = req.body.userId;
     try {
         const result = await CartModel.find({ userID });
-        if (result.length > 0) { // Check if there are products in the cart
+        if (result.length > 0) { 
             res.status(200).json({
                 status: 'success',
                 message: 'Cart data retrieved successfully',

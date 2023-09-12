@@ -67,4 +67,27 @@ const login = async  (req,res) => {
           });
     }
 }
-module.exports  = {register,login}
+const getUsers = async  (req,res) => {
+    // console.log(username,useremail, userpassword )
+    try{
+        const usersData = await UserModel.find()
+        // console.log("user => sjdflsdf",userData);
+        if(usersData){
+            res.status(200).json({
+                status: "success",
+                users:usersData,
+              });
+        }else {
+            res.status(401).json({
+                status: "error",
+                message: "Users don't exist",
+              });
+        }
+    }catch(err) {
+        res.status(500).json({
+            status: "error",
+            message: "Error occurred while fetching data",
+          });
+    }
+}
+module.exports  = {register,login,getUsers}
