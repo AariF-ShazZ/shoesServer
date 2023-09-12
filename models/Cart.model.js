@@ -1,6 +1,8 @@
 const mongoose = require("mongoose")
 
 const cartSchema = ({
+    productID:String,
+    userID:String,
     name: String,
     color: String,
     gender: String,

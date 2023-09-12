@@ -2,7 +2,7 @@ const { ProductsModel } = require("../models/Products.model")
 
 const postAllData = async (req, res) => {
     const data = req.body
-    console.log("data => ",data);
+    console.log("data => ", data);
     try {
         const result = await ProductsModel.insertMany(data);
         res.send(result);
@@ -74,9 +74,9 @@ const getData = async (req, res) => {
         }
 
         const result = await ProductsModel.find(filter)
-            .sort({ final_price: sortDirection }) 
-            .skip((page - 1) * limit) 
-            .limit(limit); 
+            .sort({ final_price: sortDirection })
+            .skip((page - 1) * limit)
+            .limit(limit);
 
         res.status(200).json({
             data: result,
@@ -91,18 +91,31 @@ const getData = async (req, res) => {
 
 
 
-
 const updateData = async (req, res) => {
-    const data = req.body
+    const ID = req.params.id;
+    const payload = req.body;
     try {
-        res.send("UPDATE")
+        const updatedProduct = await ProductsModel.findByIdAndUpdate(ID, payload, { new: true });
+
+        if (updatedProduct) {
+            const remainingData = await ProductsModel.find();
+            res.status(200).json({
+                message: `Updated the Product whose id is ${ID}`,
+                data: remainingData,
+            });
+        } else {
+            res.status(404).json({ message: `Product with id ${ID} not found` });
+        }
     } catch (err) {
-        res.send("error")
+        console.error(err);
+        res.status(500).json({ message: 'Internal Server Error' });
     }
 }
 
+
 const deleteData = async (req, res) => {
     const ID = req.params.id;
+
     try {
         const deletedProduct = await ProductsModel.findByIdAndDelete({ _id: ID });
 
@@ -122,5 +135,4 @@ const deleteData = async (req, res) => {
     }
 };
 
-
-module.exports = { postData, getData, updateData, deleteData, postAllData,singleData }
+module.exports = { postData, getData, updateData, deleteData, postAllData, singleData }
