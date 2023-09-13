@@ -142,5 +142,32 @@ const cartDecreaseQuantity = async (req, res) => {
     }
 };
 
+const cartDeleteData = async (req, res) => {
+    const ID = req.params.id;
+        console.log("id",ID);
+    try {
+        const product = await CartModel.findByIdAndDelete({ _id: ID });
 
-module.exports = { cartDecreaseQuantity, cartGetData, cartIncreaseQuantity, cartPostData }
+        if (product) {
+            return res.status(200).json({
+                status: 'success',
+                message: 'Product removed from cart successfully',
+                data: product
+            });
+        }else{
+            return res.status(404).json({
+                status: 'error',
+                message: 'Product not found',
+            });
+        }
+    } catch (err) {
+        res.status(500).json({
+            status: 'error',
+            message: 'Internal Server Error',
+            error: err.message
+        });
+    }
+};
+
+
+module.exports = { cartDecreaseQuantity, cartGetData, cartIncreaseQuantity, cartPostData,cartDeleteData }
