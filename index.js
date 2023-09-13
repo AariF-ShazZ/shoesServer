@@ -8,7 +8,9 @@ const { userRoutes } = require("./routes/User.route")
 const { cartRoutes } = require("./routes/Cart.route")
 const { authenticate } = require("./middleware/authenticate.middleware")
 const app = express()
-app.use(cors())
+app.use(cors({
+    origin: 'http://localhost:3001',
+  }));
 
 app.use(express.json())
 app.get("/" ,(req,res) => {
