@@ -8,7 +8,8 @@ const cartPostData = async (req, res) => {
         console.log("isProduct", isProduct ? "true" : "false");
         if (isProduct) {
             isProduct.qty = isProduct.qty + 1;
-            let result = await isProduct.save();
+            await isProduct.save();
+            const result = await CartModel.find();
             res.status(200).json({
                 status: 'success',
                 message: 'Product quantity updated successfully',
@@ -32,10 +33,11 @@ const cartPostData = async (req, res) => {
 
             const product = new CartModel(newPayload);
             await product.save();
+            const result = await CartModel.find();
             res.status(201).json({
                 status: 'success',
                 message: 'Product added to cart successfully',
-                data: product
+                data: result
             });
         }
     } catch (err) {
@@ -149,10 +151,11 @@ const cartDeleteData = async (req, res) => {
         const product = await CartModel.findByIdAndDelete({ _id: ID });
 
         if (product) {
+            const result = await CartModel.find();
             return res.status(200).json({
                 status: 'success',
                 message: 'Product removed from cart successfully',
-                data: product
+                data: result
             });
         }else{
             return res.status(404).json({
