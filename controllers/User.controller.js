@@ -32,33 +32,47 @@ const register = async  (req,res) => {
 }
 
 const login = async  (req,res) => {
-    const { username,useremail, userpassword } = req.body
-    // console.log(username,useremail, userpassword )
+    const { username,usertype,useremail, userpassword } = req.body
     try{
-        const userData = await UserModel.findOne({useremail})
-        // console.log("user => sjdflsdf",userData);
-        if(userData){
-            bcrypt.compare(userpassword,userData.userpassword, async (err,result) => {
-                if(result){
-                    const token = jwt.sign({_id:userData._id},process.env.key)
-                    res.status(200).json({
-                        status: "success",
-                        data: userData,
-                        message: "Login successful!",
-                        token: token,
-                      });
-                }else {
-                    res.status(401).json({
-                        status: "error",
-                        message: "Invalid credentials",
-                      });
-                }
-            })
+        if(usertype == "admin"){
+            if(useremail == "admin@gmail.com" && userpassword == "admin@123"){
+                res.status(200).json({
+                    status: "success",
+                    data: { username,usertype,useremail, userpassword },
+                    message: "Admin Login successful!",
+                  });
+            }else {
+                res.status(401).json({
+                    status: "error",
+                    message: "Invalid credentials",
+                  });
+            }
+          
         }else {
-            res.status(401).json({
-                status: "error",
-                message: "User doesn't exist",
-              });
+            const userData = await UserModel.findOne({useremail})
+            if(userData){
+                bcrypt.compare(userpassword,userData.userpassword, async (err,result) => {
+                    if(result){
+                        const token = jwt.sign({_id:userData._id},process.env.key)
+                        res.status(200).json({
+                            status: "success",
+                            data: userData,
+                            message: "Login successful!",
+                            token: token,
+                          });
+                    }else {
+                        res.status(401).json({
+                            status: "error",
+                            message: "Invalid credentials",
+                          });
+                    }
+                })
+            }else {
+                res.status(401).json({
+                    status: "error",
+                    message: "User doesn't exist",
+                  });
+            }
         }
     }catch(err) {
         res.status(500).json({

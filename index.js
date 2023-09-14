@@ -7,6 +7,7 @@ const { productsRoutes } = require("./routes/Products.route")
 const { userRoutes } = require("./routes/User.route")
 const { cartRoutes } = require("./routes/Cart.route")
 const { authenticate } = require("./middleware/authenticate.middleware")
+const { orderRoutes } = require("./routes/Order.route")
 const app = express()
 app.use(cors())
 
@@ -18,6 +19,7 @@ app.use("/user",userRoutes)
 app.use("/product",productsRoutes)
 app.use(authenticate)
 app.use("/cart",cartRoutes)
+app.use("/order",orderRoutes)
 
 app.listen(port, async () => {
         await connection

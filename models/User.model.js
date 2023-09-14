@@ -1,6 +1,7 @@
 const mongoose = require("mongoose")
 const userSchema = mongoose.Schema({
     username: String,
+    usertype: String,
     useremail: String,
     userpassword: String,
 },{timestamps: true})
