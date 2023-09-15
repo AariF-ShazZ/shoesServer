@@ -1,15 +1,23 @@
 const { ProductsModel } = require("../models/Products.model")
 
-const postAllData = async (req, res) => {
-    const data = req.body
-    console.log("data => ", data);
+const getAllData = async (req, res) => {
     try {
-        const result = await ProductsModel.insertMany(data);
-        res.send(result);
+        const result = await ProductsModel.find();
+        res.status(200).json({
+            success: true,
+            message: "Successfully fetched data",
+            productResult: result.length,
+            Result: result
+        });
     } catch (err) {
-        res.send("error")
+        res.status(500).json({
+            success: false,
+            message: "Internal server error",
+            error: err.message
+        });
     }
 }
+
 
 const singleData = async (req, res) => {
     const ID = req.params.id;
@@ -133,4 +141,4 @@ const deleteData = async (req, res) => {
     }
 };
 
-module.exports = { postData, getData, updateData, deleteData, postAllData, singleData }
+module.exports = { postData, getData, updateData, deleteData, getAllData, singleData }

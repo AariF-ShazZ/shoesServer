@@ -1,8 +1,8 @@
 const express = require("express")
-const { postData, getData, updateData, deleteData,postAllData, singleData } = require("../controllers/Products.controller")
+const { postData, getData, updateData, deleteData, singleData, getAllData } = require("../controllers/Products.controller")
 const productsRoutes = express.Router()
 
-productsRoutes.post("/many",postAllData)
+productsRoutes.get("/all",getAllData)
 productsRoutes.post("/create",postData)
 productsRoutes.get("/read",getData)
 productsRoutes.patch("/update/:id",updateData)
