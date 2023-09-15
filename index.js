@@ -17,9 +17,9 @@ app.get("/" ,(req,res) => {
 })
 app.use("/user",userRoutes)
 app.use("/product",productsRoutes)
+app.use("/order",orderRoutes)
 app.use(authenticate)
 app.use("/cart",cartRoutes)
-app.use("/order",orderRoutes)
 
 app.listen(port, async () => {
         await connection
