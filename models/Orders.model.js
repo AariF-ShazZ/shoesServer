@@ -2,9 +2,9 @@ const mongoose = require("mongoose")
 
 const orderSchema =mongoose.Schema ({
     city:String,
-    village:String,
+    state:String,
     username: String,
-    products: Number,
+    totalProducts: Number,
     amount: Number
 },{timestamps: true})
 

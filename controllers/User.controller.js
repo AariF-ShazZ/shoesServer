@@ -5,7 +5,6 @@ require("dotenv").config()
 
 const register = async  (req,res) => {
     const { username,useremail, userpassword } = req.body
-    // console.log(username,useremail, password)
     try {
         bcrypt.hash(userpassword, 5, async (err, hash) => {
             if(err){

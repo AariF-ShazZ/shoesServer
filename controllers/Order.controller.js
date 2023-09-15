@@ -10,7 +10,7 @@ const orderPostData = async (req, res) => {
             const result = await OrderModel.find();
             res.status(201).json({
                 status: 'success',
-                message: 'Products order successfully',
+                message: 'Place order successfully',
                 data: result
             });
     } catch (err) {
