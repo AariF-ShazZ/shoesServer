@@ -36,7 +36,6 @@ const singleData = async (req, res) => {
     }
 };
 
-
 const postData = async (req, res) => {
     const data = req.body;
     try {

@@ -88,7 +88,7 @@ const cartIncreaseQuantity = async (req, res) => {
         }
         product.qty += 1;
         await product.save();
-        const result = await CartModel.find();
+        const result = await CartModel.find({userID:product.userID});
         res.status(200).json({
             status: 'success',
             message: 'Product quantity increased successfully',
@@ -129,7 +129,7 @@ const cartDecreaseQuantity = async (req, res) => {
 
         product.qty -= 1;
         await product.save();
-        const result = await CartModel.find();
+        const result = await CartModel.find({userID:product.userID});
         res.status(200).json({
             status: 'success',
             message: 'Product quantity decreased successfully',
