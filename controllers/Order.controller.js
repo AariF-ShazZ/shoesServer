@@ -5,13 +5,21 @@ const { OrderModel } = require("../models/Orders.model");
 const orderPostData = async (req, res) => {
     const data = req.body
     try {
-        const product = new OrderModel(data);
-        await product.save();
+        const product = await OrderModel.findOne({ userID: data.userID});
+        if (!product) {
+            new OrderModel(data);
+            res.status(201).json({
+                status: 'success',
+                message: 'Place order successfully',
+            });
+        }
+        // const product = await OrderModel.({ userID: data.userID});
+        const updatedOrder = await OrderModel.findByIdAndUpdate(product._id, data, { new: true });
+        await updatedOrder.save();
         const result = await OrderModel.find();
         res.status(201).json({
             status: 'success',
-            message: 'Place order successfully',
-            data: result
+            message: 'Place order updated successfully',
         });
     } catch (err) {
         console.error(err);
