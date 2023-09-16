@@ -3,33 +3,35 @@ const { OrderModel } = require("../models/Orders.model");
 
 
 const orderPostData = async (req, res) => {
-    const data = req.body
+    const data = req.body;
     try {
-        const product = await OrderModel.findOne({ userID: data.userID});
-        if (!product) {
-            new OrderModel(data);
-            res.status(201).json({
-                status: 'success',
-                message: 'Place order successfully',
-            });
-        }
-        // const product = await OrderModel.({ userID: data.userID});
-        const updatedOrder = await OrderModel.findByIdAndUpdate(product._id, data, { new: true });
-        await updatedOrder.save();
-        const result = await OrderModel.find();
-        res.status(201).json({
-            status: 'success',
-            message: 'Place order updated successfully',
+      const product = await OrderModel.findOne({ userID: data.userID });
+  
+      if (!product) {
+        const newData = new OrderModel(data);
+        await newData.save();
+        return res.status(201).json({
+          status: 'success',
+          message: 'Place order successfully',
         });
+      }
+      const updatedOrder = await OrderModel.findByIdAndUpdate(product._id, data, { new: true });
+      await updatedOrder.save();
+  
+      return res.status(201).json({
+        status: 'success',
+        message: 'Place order updated successfully',
+      });
     } catch (err) {
-        console.error(err);
-        res.status(500).json({
-            status: 'error',
-            message: 'Internal Server Error',
-            error: err
-        });
+      console.error(err);
+      return res.status(500).json({
+        status: 'error',
+        message: 'Internal Server Error',
+        error: err,
+      });
     }
-};
+  };
+  
 
 const orderGetData = async (req, res) => {
     try {
