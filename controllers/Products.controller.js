@@ -95,8 +95,6 @@ const getData = async (req, res) => {
     }
 }
 
-
-
 const updateData = async (req, res) => {
     const ID = req.params.id;
     const payload = req.body;
