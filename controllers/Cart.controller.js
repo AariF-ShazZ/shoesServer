@@ -9,7 +9,7 @@ const cartPostData = async (req, res) => {
         if (isProduct) {
             isProduct.qty = isProduct.qty + 1;
             await isProduct.save();
-            const result = await CartModel.find();
+            const result = await CartModel.find({userID:data.userID});
             res.status(200).json({
                 status: 'success',
                 message: 'Product quantity updated successfully',
@@ -33,7 +33,7 @@ const cartPostData = async (req, res) => {
 
             const product = new CartModel(newPayload);
             await product.save();
-            const result = await CartModel.find();
+            const result = await CartModel.find({userID:data.userID});
             res.status(201).json({
                 status: 'success',
                 message: 'Product added to cart successfully',
@@ -119,7 +119,7 @@ const cartDecreaseQuantity = async (req, res) => {
 
         if (product.qty === 1) {
             await CartModel.findByIdAndDelete(product._id);
-            const result = await CartModel.find();
+            const result = await CartModel.find({userID:product.userID});
             return res.status(200).json({
                 status: 'success',
                 message: 'Product removed from cart successfully',
