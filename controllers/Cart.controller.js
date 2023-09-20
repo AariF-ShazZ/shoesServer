@@ -5,7 +5,7 @@ const cartPostData = async (req, res) => {
     const userID = req.body.userId;
     try {
         const isProduct = await CartModel.findOne({ productID: data._id, size: data.size });
-        console.log("isProduct", isProduct ? "true" : "false");
+        // console.log("isProduct", isProduct ? "true" : "false");
         if (isProduct) {
             isProduct.qty = isProduct.qty + 1;
             await isProduct.save();
@@ -146,12 +146,13 @@ const cartDecreaseQuantity = async (req, res) => {
 
 const cartDeleteData = async (req, res) => {
     const ID = req.params.id;
+    const userID = req.body.userId;
         console.log("id",ID);
     try {
         const product = await CartModel.findByIdAndDelete({ _id: ID });
 
         if (product) {
-            const result = await CartModel.find();
+            const result = await CartModel.find({userID});
             return res.status(200).json({
                 status: 'success',
                 message: 'Product removed from cart successfully',
