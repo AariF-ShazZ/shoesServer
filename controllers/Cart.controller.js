@@ -4,8 +4,8 @@ const cartPostData = async (req, res) => {
     const data = req.body;
     const userID = req.body.userId;
     try {
-        const isProduct = await CartModel.findOne({ productID: data._id, size: data.size });
-        // console.log("isProduct", isProduct ? "true" : "false");
+        const isProduct = await CartModel.findOne({ productID:data._id, size: data.size });
+        console.log("isProduct", isProduct ? "true" : "false");
         if (isProduct) {
             isProduct.qty = isProduct.qty + 1;
             await isProduct.save();
@@ -27,6 +27,7 @@ const cartPostData = async (req, res) => {
                 final_price: data.final_price,
                 images: data.images,
                 size: data.size,
+                sizes: data.sizes,
                 reviews: data.reviews,
                 rating: data.rating
             };
