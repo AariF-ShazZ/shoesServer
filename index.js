@@ -39,8 +39,8 @@ app.post("/api/create-checkout-session",async(req,res) => {
         payment_method_types: ["card"], // Change payment_methods_types to payment_method_types
         line_items: lineItems,
         mode: "payment",
-        success_url: "http://localhost:3000/success",
-        cancel_url: "http://localhost:3000/cancel"
+        success_url: "https://shoes-app-theta.vercel.app/success",
+        cancel_url: "https://shoes-app-theta.vercel.app/cancel"
     });
     
     res.status(200).json({
