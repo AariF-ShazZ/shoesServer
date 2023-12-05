@@ -1,4 +1,5 @@
 const { CartModel } = require("../models/Cart.model")
+const stripe = require("stripe")("sk_test_51OJZ8gSDd29kDZwr94TpGvCTNdcReooPJIVaHDcIN71bZFc9gC1LVUJMsUJEJdkceKQOLTu1NQiWQTSiy3RjWUip00MLgLdplP")
 
 const cartPostData = async (req, res) => {
     const data = req.body;
@@ -174,5 +175,40 @@ const cartDeleteData = async (req, res) => {
     }
 };
 
+const createPayment = async (req, res) => {
+    const {products} = req.body
+    console.log(products)
+    try {
+        const lineItems =products.length > 0  &&  products.map((product) => ({
+            price_data:{
+                currency:"inr",
+                product_data:{
+                    name:product.name
+                },
+                unit_amount:product.final_price*100,
+            },
+            quantity:product.qty
+        }))
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ["card"], // Change payment_methods_types to payment_method_types
+            line_items: lineItems,
+            mode: "payment",
+            success_url: "http://localhost:3000/success",
+            cancel_url: "http://localhost:3000/cancel"
+        });
+        
+        res.status(200).json({
+            status: 'success',
+            message: 'Payment successfull',
+            id: session.id
+        });
+    } catch (err) {
+        res.status(500).json({
+            status: 'error',
+            message: 'Internal Server Error',
+            error: err.message
+        });
+    }
+};
 
-module.exports = { cartDecreaseQuantity, cartGetData, cartIncreaseQuantity, cartPostData,cartDeleteData }
+module.exports = { cartDecreaseQuantity, cartGetData, cartIncreaseQuantity, cartPostData,cartDeleteData,createPayment }
