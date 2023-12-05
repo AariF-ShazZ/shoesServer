@@ -17,7 +17,7 @@ app.get("/" ,(req,res) => {
     res.send("Home page")
 })
 app.use("/user",userRoutes)
-app.use("/payment",productsRoutes)
+app.use("/product",productsRoutes)
 app.use("/order",orderRoutes)
 
 
